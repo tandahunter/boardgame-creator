@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 )
 
 //Broad game definitions
@@ -21,15 +22,57 @@ const (
 	flipHorizontal
 )
 
+//Area definitions
+const (
+	topHalf = iota
+	bottomHalf
+	front
+	back
+)
+
+//Currency represents a currency item
+type Currency struct {
+	id   int
+	name string
+}
+
 //GameContext is the standard game definition class
 type GameContext struct {
+	name       string
 	definition int
+	decks      *[]Deck
 }
 
 //Point represents a 2d location
 type Point struct {
 	x int
 	y int
+}
+
+//CardArea represents an area on a card
+type CardArea struct {
+	area    int
+	value   *[]Currency
+	actions *[]CardAction
+	points  int
+}
+
+//CardAction represents an action performed by a CardArea
+type CardAction struct {
+	action int
+	cost   *[]Currency
+}
+
+//Card contains 2 sides
+type Card struct {
+	id       int
+	name     string
+	rotation int
+	front    []byte
+	back     []byte
+	isFront  bool
+	position *Point
+	areas    *[]CardArea
 }
 
 //Deck contains multiple cards
@@ -63,19 +106,11 @@ func (deck *Deck) Shuffle() {
 	max := len(cards) - 1
 
 	for i := range cards {
-		cards[i] = cards[rand.Intn(max)]
-	}
-}
+		card, newIndex := cards[i], rand.Intn(max)
 
-//Card contains 2 sides
-type Card struct {
-	id       int
-	front    []byte
-	back     []byte
-	actions  []int
-	rotation int
-	isFront  bool
-	position *Point
+		cards[i] = cards[newIndex]
+		cards[newIndex] = card
+	}
 }
 
 //Transform manipulates the rotation of facing of the card
@@ -95,4 +130,15 @@ func (card *Card) Transform(transformation int) {
 
 func main() {
 	fmt.Println("Hello, World")
+}
+
+func loadContext(filename string) {
+	xmlFile, err := os.Open("data/palm-island.cfg")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+
+	defer xmlFile.Close()
+
 }

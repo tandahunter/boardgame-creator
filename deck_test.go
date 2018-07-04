@@ -56,6 +56,7 @@ func TestShuffle(t *testing.T) {
 	decktotal := 0
 	for i := 0; i < deckcount; i++ {
 		decktotal += cards[i].id
+		fmt.Println(strconv.Itoa(cards[i].id))
 	}
 
 	if desiredtotal != decktotal {
